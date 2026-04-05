@@ -49,7 +49,7 @@ export default function Home() {
     en: {
       nav: ['About', 'Services', 'Collaboration', 'Applications', 'Contact'],
       hero: {
-        headline: 'Engineering the Future of Smart Agriculture & Industry',
+        headline: 'Engineering the Future of Industry and Smart Agriculture',
         subheadline: 'German-driven automation solutions bridging agriculture, industry, and education.',
         cta1: 'Work With Us',
         cta2: 'Learn More',
@@ -118,7 +118,7 @@ export default function Home() {
     zh: {
       nav: ['關於我們', '核心服務', '合作模式', '應用場景', '聯絡我們'],
       hero: {
-        headline: '智慧農業與工業的未來工程',
+        headline: '工業與智慧農業的未來工程',
         subheadline: '德國驅動的自動化解決方案，連接農業、工業與教育。',
         cta1: '合作洽詢',
         cta2: '了解更多',
@@ -204,13 +204,13 @@ export default function Home() {
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.1), inset 0 1px 0 rgba(0, 217, 255, 0.1);
           }
         `}</style>
-        <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center border border-primary/50" style={{ boxShadow: '0 0 10px rgba(0, 217, 255, 0.3)' }}>
-              <span className="text-primary-foreground font-bold text-xs">DM</span>
+        <div className="container flex items-center justify-between h-20">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-primary rounded-sm flex items-center justify-center border border-primary/50" style={{ boxShadow: '0 0 10px rgba(0, 217, 255, 0.3)' }}>
+              <span className="text-primary-foreground font-bold text-lg">DM</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-sm leading-tight">DerMech</span>
+              <span className="font-bold text-base leading-tight">DerMech</span>
               <span className="text-xs text-primary/80">德機智造</span>
             </div>
           </div>
@@ -332,8 +332,8 @@ export default function Home() {
             </div>
             <div className="relative">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663474460314/VmUwwdVjMDCJMv5wAYx85F/education-metal-bdTn4dvhpQKqJNTWQT7m9c.webp"
-                alt="Education and Training"
+                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop"
+                alt="Industry and Agriculture"
                 className="w-full rounded-lg"
                 style={{ boxShadow: '0 0 30px rgba(0, 217, 255, 0.2), inset 0 0 20px rgba(0, 217, 255, 0.05)' }}
               />
@@ -438,9 +438,9 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.2)' }}>{content.applications.title}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: content.applications.scenario1, img: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663474460314/VmUwwdVjMDCJMv5wAYx85F/industrial-metal-FAxsLdfUNZhMvJYsAS5K8W.webp' },
-              { title: content.applications.scenario2, img: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663474460314/VmUwwdVjMDCJMv5wAYx85F/agriculture-metal-H9roMTikQoCYHaNwLFQGnV.webp' },
-              { title: content.applications.scenario3, img: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663474460314/VmUwwdVjMDCJMv5wAYx85F/agriculture-metal-H9roMTikQoCYHaNwLFQGnV.webp' },
+              { title: content.applications.scenario1, img: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&h=600&fit=crop' },
+              { title: content.applications.scenario2, img: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&h=600&fit=crop' },
+              { title: content.applications.scenario3, img: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop' },
             ].map((app, idx) => (
               <div key={idx} className="bg-card rounded-lg overflow-hidden" style={{ boxShadow: '0 0 20px rgba(0, 217, 255, 0.1)' }}>
                 <img src={app.img} alt={app.title} className="w-full h-48 object-cover" />
@@ -468,12 +468,12 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center" style={{ textShadow: '0 0 15px rgba(0, 217, 255, 0.2)' }}>{content.values.title}</h2>
           <div className="grid md:grid-cols-3 gap-12">
             {[
-              { title: content.values.pillar1, desc: content.values.pillar1Desc },
-              { title: content.values.pillar2, desc: content.values.pillar2Desc },
-              { title: content.values.pillar3, desc: content.values.pillar3Desc },
+              { title: content.values.pillar1, desc: content.values.pillar1Desc, img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop' },
+              { title: content.values.pillar2, desc: content.values.pillar2Desc, img: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop' },
+              { title: content.values.pillar3, desc: content.values.pillar3Desc, img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop' },
             ].map((pillar, idx) => (
-              <div key={idx} className="text-center p-6 border border-primary/30 rounded-lg" style={{ boxShadow: '0 0 15px rgba(0, 217, 255, 0.05)' }}>
-                <div className="w-16 h-16 bg-primary/20 rounded-lg mx-auto mb-6 border border-primary/40" style={{ boxShadow: '0 0 10px rgba(0, 217, 255, 0.2)' }} />
+              <div key={idx} className="text-center p-6 border border-primary/30 rounded-lg overflow-hidden" style={{ boxShadow: '0 0 15px rgba(0, 217, 255, 0.05)' }}>
+                <img src={pillar.img} alt={pillar.title} className="w-full h-32 object-cover rounded mb-4" />
                 <h3 className="text-xl font-bold mb-2 text-primary">{pillar.title}</h3>
                 <p className="text-muted-foreground text-sm">{pillar.desc}</p>
               </div>
