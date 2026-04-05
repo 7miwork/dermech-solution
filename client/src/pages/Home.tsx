@@ -207,7 +207,7 @@ export default function Home() {
         <div className="container flex items-center justify-between h-20">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-transparent rounded-sm flex items-center justify-center border border-primary/50 p-0" style={{ boxShadow: '0 0 10px rgba(0, 217, 255, 0.3)' }}>
-              <img src="/dermech-solution/logo.png" alt="DerMech Solution Logo" className="w-full h-full object-contain" />
+              <img src="logo.png" alt="DerMech Solution Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-base leading-tight">DerMech</span>
