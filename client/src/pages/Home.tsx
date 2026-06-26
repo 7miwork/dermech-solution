@@ -1,32 +1,59 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Send, Cpu, Zap, Target, Shield, ChevronDown, ArrowRight } from 'lucide-react';
+import { Menu, X, Send, Cpu, Zap, Target, Shield, ChevronDown, ArrowRight, Settings, Compass, GraduationCap, Factory, Mail, MapPin, Phone } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import logo from '@/assets/logo.jpg';
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [inquiryForm, setInquiryForm] = useState({
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
+    company: '',
+    subject: '',
     message: '',
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleInquirySubmit = (e: React.FormEvent) => {
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Inquiry submitted:', inquiryForm);
-    setInquiryForm({ name: '', email: '', message: '' });
-    setFormSubmitted(true);
-    setTimeout(() => setFormSubmitted(false), 5000);
+    setSending(true);
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          company: formData.company,
+          subject: formData.subject,
+          message: formData.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+      setFormSubmitted(true);
+      setFormData({ name: '', email: '', company: '', subject: '', message: '' });
+      setTimeout(() => setFormSubmitted(false), 5000);
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -38,70 +65,36 @@ export default function Home() {
         <div className="container">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
-              <img
-                src={logo}
-                alt="DerMech Solution"
-                className="h-10 w-10 rounded-full object-cover"
-                style={{
-                  mixBlendMode: "lighten",
-                  filter: "brightness(1.1) contrast(1.1)",
-                }}
-              />
+              <img src={logo} alt="DerMech Solution" className="h-10 w-10 rounded-full object-cover" style={{ mixBlendMode: "lighten", filter: "brightness(1.1) contrast(1.1)" }} />
               <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  DerMech
-                </span>
+                <span className="font-bold text-lg leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>DerMech</span>
                 <span className="text-xs text-primary/80 tracking-wider">SOLUTION</span>
               </div>
             </div>
 
-            {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#about" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                About
-              </a>
-              <a href="#services" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                Services
-              </a>
-              <a href="#why-us" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                Why Us
-              </a>
-              <a href="#contact" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                Contact
-              </a>
-              <Button className="bg-primary hover:bg-primary/80 text-background font-medium">
-                Get Started
-              </Button>
+              {['about', 'services', 'process', 'education', 'industries', 'contact'].map((item) => (
+                <button key={item} onClick={() => scrollTo(item)} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors capitalize">
+                  {item === 'industries' ? 'Industries' : item}
+                </button>
+              ))}
+              <Button onClick={() => scrollTo('contact')} className="bg-primary hover:bg-primary/80 text-background font-medium">Get Started</Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-foreground"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-primary/20 bg-background/95 backdrop-blur-xl">
               <div className="container py-6 flex flex-col gap-4">
-                <a href="#about" className="text-sm font-medium text-foreground/80 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
-                  About
-                </a>
-                <a href="#services" className="text-sm font-medium text-foreground/80 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
-                  Services
-                </a>
-                <a href="#why-us" className="text-sm font-medium text-foreground/80 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
-                  Why Us
-                </a>
-                <a href="#contact" className="text-sm font-medium text-foreground/80 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
-                  Contact
-                </a>
-                <Button className="bg-primary hover:bg-primary/80 text-background font-medium mt-2">
-                  Get Started
-                </Button>
+                {['about', 'services', 'process', 'education', 'industries', 'contact'].map((item) => (
+                  <button key={item} onClick={() => scrollTo(item)} className="text-sm font-medium text-foreground/80 hover:text-primary">
+                    {item === 'industries' ? 'Industries' : item}
+                  </button>
+                ))}
+                <Button onClick={() => scrollTo('contact')} className="bg-primary hover:bg-primary/80 text-background font-medium mt-2">Get Started</Button>
               </div>
             </div>
           )}
@@ -110,17 +103,13 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        {/* Animated Grid Background */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px)`,
             backgroundSize: '50px 50px',
             animation: 'gridMove 20s linear infinite'
           }} />
         </div>
-
-        {/* Gradient Orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
 
@@ -140,12 +129,12 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="bg-primary hover:bg-primary/80 text-background font-medium px-8 group">
-                Explore Solutions
+              <Button size="lg" onClick={() => scrollTo('contact')} className="bg-primary hover:bg-primary/80 text-background font-medium px-8 group">
+                Schedule a Consultation
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10 text-primary px-8">
-                Get in Touch
+              <Button size="lg" variant="outline" onClick={() => scrollTo('services')} className="border-primary/50 hover:bg-primary/10 text-primary px-8">
+                Explore Services
               </Button>
             </div>
 
@@ -156,7 +145,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About / Mission Section */}
+      {/* About Section */}
       <section id="about" className="py-24 md:py-32 relative">
         <div className="container">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -165,304 +154,262 @@ export default function Home() {
                 About Us
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                German Engineering,
-                <br />
-                <span className="text-primary">Global Impact</span>
+                German Engineering,<br /><span className="text-primary">Global Impact</span>
               </h2>
               <p className="text-foreground/70 text-lg leading-relaxed mb-6">
-                 DerMech Solution is a German engineering consultancy specializing in the analysis and resolution of complex industrial challenges. With a systematic approach, we combine technological expertise with strategic thinking.
+                DerMech Solution was founded by German engineer Michael Lison. With more than 20 years of international industrial experience, Michael has successfully delivered projects in machine tools, industrial automation, plastic injection molding, automated packaging systems, and industrial fire protection systems.
               </p>
-              <p className="text-foreground/70 text-lg leading-relaxed">
+              <p className="text-foreground/70 text-lg leading-relaxed mb-6">
                 Our mission is to empower businesses through innovative automation, process optimization, and future-ready infrastructure solutions.
               </p>
-            </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 p-8 flex items-center justify-center">
-                <div className="grid grid-cols-2 gap-4 w-full">
-                  <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/10">
-                    <div className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>20+</div>
-                    <div className="text-sm text-foreground/70">Years Experience</div>
-                  </div>
-                  <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/10">
-                    <div className="text-4xl font-bold text-accent mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>100%</div>
-                    <div className="text-sm text-foreground/70">German Quality</div>
-                  </div>
-                  <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/10">
-                    <div className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>50+</div>
-                    <div className="text-sm text-foreground/70">Projects Delivered</div>
-                  </div>
-                  <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/10">
-                    <div className="text-4xl font-bold text-accent mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>24/7</div>
-                    <div className="text-sm text-foreground/70">Support</div>
-                  </div>
-                </div>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {['Mechanical Engineering', 'Industrial Automation', 'CAD/CAM Design', 'Software Development', 'System Integration'].map((tag) => (
+                  <span key={tag} className="px-3 py-1 text-xs rounded-full border border-primary/30 text-primary">{tag}</span>
+                ))}
               </div>
+              <div className="flex flex-wrap gap-3">
+                {['CE Compliance', 'DIN Standards', '5S Lean Manufacturing'].map((badge) => (
+                  <span key={badge} className="px-4 py-2 text-sm font-medium rounded-lg bg-primary/10 border border-primary/20 text-primary">{badge}</span>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { value: '20+', label: 'Years Experience' },
+                { value: '50+', label: 'Projects Delivered' },
+                { value: '10+', label: 'Industries Served' },
+                { value: '3', label: 'Continents' },
+              ].map((stat) => (
+                <div key={stat.value} className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/10 text-center">
+                  <div className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{stat.value}</div>
+                  <div className="text-sm text-foreground/70">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services / Solutions Section */}
+      {/* Services Section */}
       <section id="services" className="py-24 md:py-32 relative bg-card/30">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
         <div className="container relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-              Our Services
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Solutions We <span className="text-primary">Deliver</span>
-            </h2>
-            <p className="text-foreground/70 text-lg max-w-2xl mx-auto">
-              Comprehensive engineering solutions tailored to drive your business forward
-            </p>
+            <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">Our Services</div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Solutions We <span className="text-primary">Deliver</span></h2>
+            <p className="text-foreground/70 text-lg max-w-2xl mx-auto">End-to-end engineering solutions that create measurable value.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Service 1 */}
-            <div className="group relative bg-card border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                <Zap className="w-6 h-6 text-primary" />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Settings,
+                title: 'Industrial Automation Consulting',
+                text: 'We help manufacturers increase efficiency, reduce labor costs, and optimize production processes.',
+                items: ['Production Line Optimization', 'Process Automation', 'Equipment Modernization', 'Energy Efficiency Solutions', 'Lean Manufacturing', 'Factory Digitalization'],
+              },
+              {
+                icon: Compass,
+                title: 'Engineering Design',
+                text: 'From concept development to full-scale production, comprehensive engineering design services.',
+                items: ['Mechanical Design', 'CAD Engineering', 'Prototype Development', 'Electrical Integration', 'Automation Programming', 'Industrial Software Development'],
+                langs: 'Languages: C/C++ | Python | Java | JavaScript',
+                tools: 'Software: AutoCAD | Fusion 360 | SolidWorks',
+              },
+              {
+                icon: Shield,
+                title: 'International Engineering Standards',
+                subtitle: 'CE • DIN • 5S',
+                text: 'One of the greatest strengths of German engineering is standardization.',
+                items: ['CE Safety Compliance', 'DIN Engineering Standards', '5S Lean Manufacturing', 'Quality Improvement', 'Risk Assessment', 'Technical Documentation'],
+              },
+            ].map((service, idx) => (
+              <div key={idx} className="group relative bg-card/80 border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                  <service.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{service.title}</h3>
+                {service.subtitle && <p className="text-sm text-primary mb-2">{service.subtitle}</p>}
+                <p className="text-foreground/70 leading-relaxed mb-4">{service.text}</p>
+                <ul className="space-y-2 mb-4">
+                  {service.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-foreground/70">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                {service.langs && <p className="text-xs text-foreground/60">{service.langs}</p>}
+                {service.tools && <p className="text-xs text-foreground/60">{service.tools}</p>}
               </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Industrial Process Optimization
-              </h3>
-              <p className="text-foreground/70 leading-relaxed mb-4">
-                Analysis and redesign of inefficient manufacturing processes to maximize productivity and reduce waste.
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Production line efficiency analysis
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Workflow automation & integration
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Quality control systems
-                </li>
-              </ul>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Service 2 */}
-            <div className="group relative bg-card border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-colors">
-                <Cpu className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Smart Automation & Integration
-              </h3>
-              <p className="text-foreground/70 leading-relaxed mb-4">
-                Implementation of intelligent automation solutions for Industry 4.0, connecting systems and data streams.
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  IoT sensor networks & monitoring
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  SCADA & control system integration
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  Digital twin implementation
-                </li>
-              </ul>
-            </div>
+      {/* Process Section */}
+      <section id="process" className="py-24 md:py-32 relative">
+        <div className="container">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">How We Work</div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>A Proven <span className="text-primary">Process</span></h2>
+            <p className="text-foreground/70 text-lg max-w-2xl mx-auto">From consultation to continuous improvement — a structured engineering approach.</p>
+          </div>
 
-            {/* Service 3 */}
-            <div className="group relative bg-card border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                <Target className="w-6 h-6 text-primary" />
+          <div className="grid md:grid-cols-6 gap-6">
+            {[
+              { title: 'Technical Consultation', desc: 'Understanding your challenges and project goals.' },
+              { title: 'Site Assessment', desc: 'Analyzing your existing systems and production environment.' },
+              { title: 'Engineering Analysis', desc: 'Identifying opportunities for optimization.' },
+              { title: 'Solution Design', desc: 'Developing a customized engineering strategy.' },
+              { title: 'Implementation', desc: 'Executing and integrating the proposed solution.' },
+              { title: 'Continuous Improvement', desc: 'Providing ongoing optimization and long-term support.' },
+            ].map((step, idx) => (
+              <div key={idx} className="relative text-center">
+                <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-primary font-bold">{idx + 1}</span>
+                </div>
+                <h4 className="font-bold mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{step.title}</h4>
+                <p className="text-xs text-foreground/70">{step.desc}</p>
               </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Engineering Consulting
-              </h3>
-              <p className="text-foreground/70 leading-relaxed mb-4">
-                Strategic consulting for technical challenges at the enterprise level, aligning technology with business goals.
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Technology roadmap development
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Feasibility studies & risk assessment
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                  Vendor evaluation & selection
-                </li>
-              </ul>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Service 4 */}
-            <div className="group relative bg-card border border-primary/20 rounded-2xl p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.2)]">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-colors">
-                <Shield className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Future-Ready Infrastructure
-              </h3>
-              <p className="text-foreground/70 leading-relaxed mb-4">
-                Planning and implementation of scalable, future-proof infrastructure for industrial operations.
+      {/* Education Section */}
+      <section id="education" className="py-24 md:py-32 relative bg-card/30">
+        <div className="container">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">Education</div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Inspiring Future <span className="text-primary">Engineers</span></h2>
+              <p className="text-foreground/70 text-lg leading-relaxed mb-6">
+                At DerMech Solution, we believe engineering knowledge should be shared with the next generation. Michael Lison has many years of experience mentoring young engineers through practical, project-based learning.
               </p>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  Cloud & edge computing architecture
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  Cybersecurity for industrial systems
-                </li>
-                <li className="flex items-start gap-2 text-sm text-foreground/70">
-                  <div className="w-1.5 h-1.5 bg-accent rounded-full mt-1.5 flex-shrink-0" />
-                  Scalable network design
-                </li>
-              </ul>
+              <blockquote className="border-l-4 border-primary pl-4 italic text-foreground/80 mb-6">"The best engineers are built by creating, not memorizing."</blockquote>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {['Robotics Fundamentals', 'Mechanical Design', 'Engineering Programming', 'Arduino & Raspberry Pi', 'STEM Project-Based Learning', 'Engineering Competition Coaching', 'Innovation & Design Thinking', 'Industrial Safety Basics'].map((topic) => (
+                <div key={topic} className="bg-card/80 backdrop-blur-sm rounded-xl p-4 border border-primary/10 text-sm text-center">
+                  {topic}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why Dermech Section */}
-      <section id="why-us" className="py-24 md:py-32 relative">
+      {/* Founder Section */}
+      <section id="founder" className="py-24 md:py-32 relative">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl font-bold text-background" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>ML</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Michael Lison</h2>
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
+              {['German Engineer', 'Industrial Consultant', 'Automation Specialist', 'Software Developer', 'Engineering Educator'].map((tag) => (
+                <span key={tag} className="px-3 py-1 text-xs rounded-full border border-primary/30 text-primary">{tag}</span>
+              ))}
+            </div>
+            <p className="text-foreground/70 text-lg mb-8">20+ Years of Industrial Experience</p>
+            <div className="grid md:grid-cols-2 gap-4 text-sm text-foreground/70">
+              {['Mechanical Engineering', 'Industrial Automation', 'Software Development', 'CE & DIN Standards', '5S Lean Manufacturing', 'International Project Management'].map((skill) => (
+                <div key={skill} className="bg-card/50 rounded-lg p-3 border border-primary/10">{skill}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Industries Section */}
+      <section id="industries" className="py-24 md:py-32 relative bg-card/30">
         <div className="container">
           <div className="text-center mb-16">
-            <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-              Why Choose Us
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-               The DerMech <span className="text-primary">Advantage</span>
-            </h2>
+            <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">Industries We Serve</div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sectors We <span className="text-primary">Transform</span></h2>
+            <p className="text-foreground/70 text-lg max-w-2xl mx-auto">Supporting businesses across a wide range of sectors.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-card/50 border border-primary/10 hover:border-primary/30 transition-all duration-300">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Target className="w-8 h-8 text-primary" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              'Semiconductor Manufacturing',
+              'Electronics Manufacturing',
+              'Machine Tools',
+              'Plastic Injection Molding',
+              'Automated Packaging',
+              'Food Processing',
+              'Drone Technology',
+              'Precision Engineering',
+              'Industrial Machinery',
+              'Research & Development',
+              'Startups',
+              'Smart Factory / Industry 4.0',
+            ].map((industry) => (
+              <div key={industry} className="bg-card/80 backdrop-blur-sm rounded-xl p-4 border border-primary/10 text-sm text-center hover:border-primary/30 transition-colors">
+                {industry}
               </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Precision Engineering
-              </h3>
-              <p className="text-foreground/70 leading-relaxed">
-                Every solution is crafted with meticulous attention to detail, ensuring optimal performance and reliability.
-              </p>
-            </div>
-
-            <div className="text-center p-8 rounded-2xl bg-card/50 border border-primary/10 hover:border-primary/30 transition-all duration-300">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-8 h-8 text-accent" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Future-Focused
-              </h3>
-              <p className="text-foreground/70 leading-relaxed">
-                We stay ahead of industry trends, implementing cutting-edge technologies that keep you competitive.
-              </p>
-            </div>
-
-            <div className="text-center p-8 rounded-2xl bg-card/50 border border-primary/10 hover:border-primary/30 transition-all duration-300">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Proven Methodology
-              </h3>
-              <p className="text-foreground/70 leading-relaxed">
-                Our systematic approach, refined over 20+ years, delivers consistent results across industries.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 md:py-32 relative bg-card/30">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
-        <div className="container relative z-10">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-                Contact Us
+      <section id="contact" className="py-24 md:py-32 relative">
+        <div className="container">
+          <div className="grid md:grid-cols-2 gap-16">
+            <div>
+              <div className="inline-block px-4 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">Contact Us</div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Let's Build the <span className="text-primary">Future Together</span></h2>
+              <p className="text-foreground/70 text-lg mb-8">DerMech Solution — German Engineering. Built for Global Industry.</p>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-primary" />
+                  <a href="mailto:Lison7363@gmail.com" className="text-foreground/80 hover:text-primary">Lison7363@gmail.com</a>
+                </div>
+                <p className="text-sm text-foreground/60">We typically respond within 24 hours.</p>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Let's Start a <span className="text-primary">Conversation</span>
-              </h2>
-              <p className="text-foreground/70 text-lg">
-                Have a project in mind? We'd love to hear about it.
-              </p>
             </div>
 
-            <div className="bg-card/80 backdrop-blur-sm border border-primary/20 rounded-2xl p-8 md:p-12">
+            <div className="bg-card/80 backdrop-blur-sm border border-primary/20 rounded-2xl p-8">
               {formSubmitted ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Send className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    Thank You!
-                  </h3>
-                  <p className="text-foreground/70">
-                    We'll be in touch with you shortly.
-                  </p>
+                  <h3 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Message Sent!</h3>
+                  <p className="text-foreground/70">Thank you. We'll be in touch shortly.</p>
                 </div>
               ) : (
-                <form onSubmit={handleInquirySubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground/80 mb-2">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={inquiryForm.name}
-                        onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
-                        className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-foreground/40"
-                        placeholder="John Doe"
-                      />
+                      <label className="block text-sm font-medium text-foreground/80 mb-2">Name *</label>
+                      <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" placeholder="John Doe" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground/80 mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={inquiryForm.email}
-                        onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-foreground/40"
-                        placeholder="john@example.com"
-                      />
+                      <label className="block text-sm font-medium text-foreground/80 mb-2">Email *</label>
+                      <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" placeholder="john@example.com" />
                     </div>
                   </div>
-
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground/80 mb-2">Company</label>
+                      <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" placeholder="Company name" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground/80 mb-2">Subject *</label>
+                      <input type="text" required value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground" placeholder="Project inquiry" />
+                    </div>
+                  </div>
                   <div>
-                    <label className="block text-sm font-medium text-foreground/80 mb-2">
-                      Message
-                    </label>
-                    <textarea
-                      required
-                      value={inquiryForm.message}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, message: e.target.value })}
-                      className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-foreground placeholder:text-foreground/40 h-32 resize-none"
-                      placeholder="Tell us about your project..."
-                    />
+                    <label className="block text-sm font-medium text-foreground/80 mb-2">Message *</label>
+                    <textarea required value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} className="w-full px-4 py-3 bg-background/50 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground h-32 resize-none" placeholder="Tell us about your project..." />
                   </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-primary hover:bg-primary/80 text-background font-medium group"
-                  >
-                    Send Message
-                    <Send className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <Button type="submit" size="lg" disabled={sending} className="w-full bg-primary hover:bg-primary/80 text-background font-medium">
+                    {sending ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               )}
@@ -476,14 +423,13 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="DerMech Solution" className="h-8 w-auto" />
-              <span className="font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                DerMech Solution
-              </span>
+              <img src={logo} alt="DerMech Solution" className="h-8 w-8 rounded-full object-cover" style={{ mixBlendMode: "lighten", filter: "brightness(1.1) contrast(1.1)" }} />
+              <span className="font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>DerMech Solution</span>
             </div>
-            <p className="text-sm text-foreground/60">
-              © {new Date().getFullYear()} DerMech Solution. All rights reserved.
-            </p>
+            <div className="text-center md:text-right">
+              <p className="text-sm text-foreground/60">© {new Date().getFullYear()} DerMech Solution. All rights reserved.</p>
+              <p className="text-xs text-foreground/50">German Engineering. Built for Global Industry.</p>
+            </div>
           </div>
         </div>
       </footer>
