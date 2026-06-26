@@ -38,7 +38,15 @@ export default function Home() {
         <div className="container">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="DerMech Solution" className="h-10 w-auto" />
+              <img
+                src={logo}
+                alt="DerMech Solution"
+                className="h-10 w-10 rounded-full object-cover"
+                style={{
+                  mixBlendMode: "lighten",
+                  filter: "brightness(1.1) contrast(1.1)",
+                }}
+              />
               <div className="flex flex-col">
                 <span className="font-bold text-lg leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   DerMech
