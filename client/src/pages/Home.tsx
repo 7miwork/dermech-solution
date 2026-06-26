@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Send, Cpu, Zap, Target, Shield, ChevronDown, ArrowRight } from 'lucide-react';
+import logo from '@/assets/logo.jpg';
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,12 +38,10 @@ export default function Home() {
         <div className="container">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Cpu className="w-6 h-6 text-background" />
-              </div>
+              <img src={logo} alt="DerMech Solution" className="h-10 w-auto" />
               <div className="flex flex-col">
                 <span className="font-bold text-lg leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  Dermech
+                  DerMech
                 </span>
                 <span className="text-xs text-primary/80 tracking-wider">SOLUTION</span>
               </div>
@@ -163,7 +162,7 @@ export default function Home() {
                 <span className="text-primary">Global Impact</span>
               </h2>
               <p className="text-foreground/70 text-lg leading-relaxed mb-6">
-                Dermech Solution is a German engineering consultancy specializing in the analysis and resolution of complex industrial challenges. With a systematic approach, we combine technological expertise with strategic thinking.
+                 DerMech Solution is a German engineering consultancy specializing in the analysis and resolution of complex industrial challenges. With a systematic approach, we combine technological expertise with strategic thinking.
               </p>
               <p className="text-foreground/70 text-lg leading-relaxed">
                 Our mission is to empower businesses through innovative automation, process optimization, and future-ready infrastructure solutions.
@@ -331,7 +330,7 @@ export default function Home() {
               Why Choose Us
             </div>
             <h2 className="text-4xl md:text-5xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              The Dermech <span className="text-primary">Advantage</span>
+               The DerMech <span className="text-primary">Advantage</span>
             </h2>
           </div>
 
@@ -469,15 +468,13 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Cpu className="w-4 h-4 text-background" />
-              </div>
+              <img src={logo} alt="DerMech Solution" className="h-8 w-auto" />
               <span className="font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Dermech Solution
+                DerMech Solution
               </span>
             </div>
             <p className="text-sm text-foreground/60">
-              © {new Date().getFullYear()} Dermech Solution. All rights reserved.
+              © {new Date().getFullYear()} DerMech Solution. All rights reserved.
             </p>
           </div>
         </div>
