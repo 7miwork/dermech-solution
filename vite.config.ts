@@ -4,7 +4,7 @@ import path from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/dermech-solution/",
+  base: "./",
   plugins: [
     react(),
     tailwindcss(),

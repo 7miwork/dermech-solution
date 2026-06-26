@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 
 function AppRouter() {
   return (
-    <Router base="/dermech-solution">
+    <Router base="/">
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/404" component={NotFound} />
