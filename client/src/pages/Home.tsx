@@ -125,11 +125,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Engineering the Future
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                of Industry
-              </span>
+              Engineering the Industry
             </h1>
 
             <p className="text-lg md:text-xl text-foreground/70 mb-12 max-w-2xl mx-auto leading-relaxed">
